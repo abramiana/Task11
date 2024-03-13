@@ -2,6 +2,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +12,7 @@ import java.time.ZoneOffset;
 
 @WebFilter("/time")
 public class TimezoneValidateFilter implements Filter {
+    private static final Logger logger = LogManager.getLogger(TimezoneValidateFilter.class);
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -18,10 +21,12 @@ public class TimezoneValidateFilter implements Filter {
 
         // Отримання значення параметра timezone з запиту
         String timezoneParam = httpRequest.getParameter("timezone");
+        logger.info("Received timezone parameter: {}", timezoneParam);
 
         // Перевірка, чи параметр не є порожнім або містить тільки пробіли
         if (timezoneParam != null && !timezoneParam.trim().isEmpty()) {
             // Спроба розбити параметр на ідентифікатор та зсув
+            logger.error("Invalid timezone offset: {}", timezoneParam);
             String[] parts = timezoneParam.split("\\s+");
             String timezoneId = parts[0];
             int offset = 0;
@@ -56,6 +61,7 @@ public class TimezoneValidateFilter implements Filter {
 
             // Установка атрибута з об'єктом ZoneId для подальшого використання
             httpRequest.setAttribute("zoneId", zoneId);
+            logger.info("Timezone successfully validated and set: {}", zoneId);
         }
 
         // Продовження ланцюга фільтрів

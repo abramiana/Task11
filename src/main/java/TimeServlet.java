@@ -2,6 +2,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 @WebServlet("/time")
 public class TimeServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(TimeServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
@@ -22,6 +25,7 @@ public class TimeServlet extends HttpServlet {
         if (zoneId == null) {
             // Якщо zoneId не було встановлено, використовуємо UTC за замовчуванням
             zoneId = ZoneId.of("UTC");
+            logger.error("Timezone not found in request attribute, using default UTC timezone");
         }
 
         // Отримання поточного часу у вказаному часовому поясі
@@ -36,5 +40,6 @@ public class TimeServlet extends HttpServlet {
         out.println("<body><h1>Current Time</h1>");
         out.println("<p>" + formattedTime + "</p>");
         out.println("</body></html>");
+        logger.info("Successfully retrieved and displayed current time in timezone: {}", zoneId);
     }
 }
