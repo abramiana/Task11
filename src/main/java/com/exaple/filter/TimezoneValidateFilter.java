@@ -1,3 +1,5 @@
+package com.exaple.filter;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,10 +12,22 @@ import java.io.PrintWriter;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
+/**
+ * Фільтр для перевірки та обробки часового поясу з параметру запиту "timezone".
+ */
 @WebFilter("/time")
 public class TimezoneValidateFilter implements Filter {
     private static final Logger logger = LogManager.getLogger(TimezoneValidateFilter.class);
 
+    /**
+     * Виконує фільтрацію запиту та встановлює часовий пояс, якщо він переданий у параметрі.
+     *
+     * @param request  об'єкт HttpServletRequest
+     * @param response об'єкт HttpServletResponse
+     * @param chain    об'єкт FilterChain
+     * @throws IOException      якщо виникає помилка вводу/виводу при зверненні до потоків
+     * @throws ServletException якщо виникає помилка у Servlet-компоненті
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
